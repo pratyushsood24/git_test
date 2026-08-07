@@ -1,56 +1,57 @@
 {
-  "_comment": "Copy to inputs.json and edit. Every value is overridable. Sources: AirROI 2026 Canberra/North Canberra market data + web research (see README). Replace assumptions with AirROI API pulls + your actuals.",
+  "_comment": "Real user inputs (2026-08-07) + interim market assumptions. ADR/occupancy are INTERIM pending AirROI API pull for this 4bd property. Sources labelled inline.",
   "currency": "AUD",
   "property": {
     "address": "54 Ashburner St, Higgins ACT 2615",
-    "market_value": 850000,
-    "market_value_source": "ASSUMPTION — Higgins median house ~$826k-$878k (htag/propertyvalue 2025); confirm with your valuation",
-    "bedrooms": 3,
-    "bathrooms": 1,
-    "max_guests": 6
+    "market_value": 1000000,
+    "market_value_source": "USER-PROVIDED",
+    "bedrooms": 4,
+    "bathrooms": 2,
+    "max_guests": 8,
+    "parking": "4 (driveway)"
   },
   "financing": {
     "has_mortgage": false,
     "loan_balance": 0,
     "interest_rate": 0.062,
-    "_note": "Set has_mortgage true and fill loan_balance/interest_rate for cash-on-cash; interest-only assumed for the cash-flow view."
+    "_note": "No mortgage supplied — treated as all-cash; cash-on-cash == net yield. Provide loan details to model leverage."
   },
   "str": {
-    "adr": 172,
-    "adr_source": "AirROI 2026 Canberra ADR ~$172 (North Canberra ~$153) — REPLACE with AirROI API comps for this property",
+    "adr": 290,
+    "adr_source": "INTERIM ESTIMATE for a 4bd entire home (market all-sizes avg is ~$172; 4bd commands a premium). REPLACE with AirROI comps.",
     "occupancy": {
       "conservative": 0.40,
       "base": 0.48,
       "aggressive": 0.60
     },
-    "occupancy_source": "AirROI 2026: Canberra 45.7%, North Canberra 48%; Airbtics 2025 higher (~72%). Base=North Canberra; verify via API.",
+    "occupancy_source": "AirROI 2026: Canberra 45.7%, North Canberra 48%; Airbtics 2025 ~72%. Base=North Canberra; verify via API.",
     "act_levy_rate": 0.05,
     "act_levy_rate_2027": 0.075,
-    "cleaning_fee_per_stay": 120,
+    "cleaning_fee_per_stay": 150,
     "avg_length_of_stay_nights": 3
   },
   "operating_costs": {
     "management_fee_pct_of_revenue": 0.18,
     "self_managed": false,
     "platform_fee_pct": 0.03,
-    "utilities_internet_annual": 4200,
-    "insurance_annual": 1800,
-    "consumables_annual": 1500,
-    "maintenance_annual": 2500,
-    "council_rates_annual": 3200,
-    "listing_supplies_annual": 600
+    "utilities_internet_annual": 5400,
+    "insurance_annual": 2200,
+    "consumables_annual": 1800,
+    "maintenance_annual": 3000,
+    "council_rates_annual": 3400,
+    "listing_supplies_annual": 700
   },
   "setup_capex": {
     "furnishing_and_setup": 30000,
     "amortization_years": 5
   },
   "long_term_rental": {
-    "weekly_rent": 620,
-    "weekly_rent_source": "ASSUMPTION — confirm with a Belconnen leasing agent",
+    "weekly_rent": 750,
+    "weekly_rent_source": "USER-PROVIDED (expected)",
     "annual_vacancy_weeks": 2,
     "mgmt_fee_pct": 0.07,
     "annual_maintenance": 1500,
-    "council_rates_annual": 3200,
-    "insurance_annual": 900
+    "council_rates_annual": 3400,
+    "insurance_annual": 1000
   }
 }
