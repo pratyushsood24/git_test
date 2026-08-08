@@ -1,0 +1,16 @@
+{
+  "market": {
+    "country": "Australia",
+    "region": "Australian Capital Territory",
+    "locality": "District of Belconnen",
+    "district": null
+  },
+  "occupancy": 0.47,
+  "average_daily_rate": 229.6,
+  "rev_par": 111.5,
+  "revenue": 28187.6,
+  "booking_lead_time": 42.9,
+  "length_of_stay": 5.3,
+  "min_nights": 4.8,
+  "active_listings_count": 195.8
+}

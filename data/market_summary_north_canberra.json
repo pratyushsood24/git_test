@@ -1,0 +1,16 @@
+{
+  "market": {
+    "country": "Australia",
+    "region": "Australian Capital Territory",
+    "locality": "North Canberra",
+    "district": null
+  },
+  "occupancy": 0.51,
+  "average_daily_rate": 232.2,
+  "rev_par": 121.3,
+  "revenue": 32331.9,
+  "booking_lead_time": 45.2,
+  "length_of_stay": 4.5,
+  "min_nights": 2.6,
+  "active_listings_count": 404.4
+}

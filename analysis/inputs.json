@@ -1,8 +1,15 @@
 {
-  "_comment": "Real user inputs (2026-08-07) + interim market assumptions. ADR/occupancy are INTERIM pending AirROI API pull for this 4bd property. Sources labelled inline.",
+  "_comment": "Real inputs. STR scenarios anchored to AirROI calculator percentiles for THIS property (4bd/2ba, lat -35.236/lng 149.033), pulled 2026-08-08. Gross revenue is authoritative from AirROI; ADR/occupancy are descriptive. Costs are labelled assumptions you can override.",
   "currency": "AUD",
+  "_sources": {
+    "airroi_calculator": "avg rev $69,246 / ADR $383 / occ 51.8%; percentiles rev p25 $38,005, p50 $62,033, p75 $86,899, p90 $116,298",
+    "airroi_market_district_of_belconnen": "occ 47%, ADR $229.6, RevPAR $111.5, avg annual revenue $28,188, ~196 active listings",
+    "airroi_comps_4bd_plus": "n=15: median occ 30% / ADR $374 / rev $46,012; top well-run 4bd: 58-71% occ, ADR $344-374, rev $90-102k",
+    "note": "Market-average revenue ($28k) mixes all sizes (mostly 1-2br); a 4bd commands the higher per-property figures above."
+  },
   "property": {
     "address": "54 Ashburner St, Higgins ACT 2615",
+    "market": "Higgins, District of Belconnen, ACT, Australia",
     "market_value": 1000000,
     "market_value_source": "USER-PROVIDED",
     "bedrooms": 4,
@@ -14,32 +21,31 @@
     "has_mortgage": false,
     "loan_balance": 0,
     "interest_rate": 0.062,
-    "_note": "No mortgage supplied — treated as all-cash; cash-on-cash == net yield. Provide loan details to model leverage."
+    "_note": "No mortgage supplied -> all-cash; cash-on-cash == net yield. Provide loan details to model leverage."
   },
   "str": {
-    "adr": 290,
-    "adr_source": "INTERIM ESTIMATE for a 4bd entire home (market all-sizes avg is ~$172; 4bd commands a premium). REPLACE with AirROI comps.",
-    "occupancy": {
-      "conservative": 0.40,
-      "base": 0.48,
-      "aggressive": 0.60
+    "scenarios": {
+      "conservative": {"occupancy": 0.36, "adr": 251, "gross_revenue": 38005,
+        "basis": "AirROI p25 — first-year ramp / average-to-weak management"},
+      "base": {"occupancy": 0.52, "adr": 346, "gross_revenue": 62033,
+        "basis": "AirROI p50 median for this property — competently run"},
+      "aggressive": {"occupancy": 0.67, "adr": 456, "gross_revenue": 86899,
+        "basis": "AirROI p75 — professionally managed / top-quartile"}
     },
-    "occupancy_source": "AirROI 2026: Canberra 45.7%, North Canberra 48%; Airbtics 2025 ~72%. Base=North Canberra; verify via API.",
     "act_levy_rate": 0.05,
     "act_levy_rate_2027": 0.075,
-    "cleaning_fee_per_stay": 150,
-    "avg_length_of_stay_nights": 3
+    "avg_length_of_stay_nights": 5.3
   },
   "operating_costs": {
     "management_fee_pct_of_revenue": 0.18,
     "self_managed": false,
     "platform_fee_pct": 0.03,
-    "utilities_internet_annual": 5400,
-    "insurance_annual": 2200,
-    "consumables_annual": 1800,
-    "maintenance_annual": 3000,
-    "council_rates_annual": 3400,
-    "listing_supplies_annual": 700
+    "utilities_internet_annual": 6000,
+    "insurance_annual": 2400,
+    "consumables_annual": 2400,
+    "maintenance_annual": 3500,
+    "council_rates_annual": 3800,
+    "listing_supplies_annual": 800
   },
   "setup_capex": {
     "furnishing_and_setup": 30000,
@@ -51,7 +57,7 @@
     "annual_vacancy_weeks": 2,
     "mgmt_fee_pct": 0.07,
     "annual_maintenance": 1500,
-    "council_rates_annual": 3400,
+    "council_rates_annual": 3800,
     "insurance_annual": 1000
   }
 }

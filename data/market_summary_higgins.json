@@ -1,0 +1,16 @@
+{
+  "market": {
+    "country": "Australia",
+    "region": "Australian Capital Territory",
+    "locality": "District of Belconnen",
+    "district": "Higgins"
+  },
+  "occupancy": 0.55,
+  "average_daily_rate": 188.4,
+  "rev_par": 106.4,
+  "revenue": 30059.8,
+  "booking_lead_time": 25.3,
+  "length_of_stay": 6.0,
+  "min_nights": 15.7,
+  "active_listings_count": 4.4
+}

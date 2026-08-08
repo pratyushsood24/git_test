@@ -1,0 +1,74 @@
+[
+  {
+    "name": "market_lookup",
+    "status": 200,
+    "ok": true,
+    "url": "https://api.airroi.com/markets/lookup?lat=-35.236&lng=149.033",
+    "error": null,
+    "ts": "2026-08-08T00:07:00.175332+00:00"
+  },
+  {
+    "name": "market_summary_higgins",
+    "status": 200,
+    "ok": true,
+    "url": "https://api.airroi.com/markets/summary",
+    "error": null,
+    "ts": "2026-08-08T00:07:02.790018+00:00"
+  },
+  {
+    "name": "market_summary_belconnen",
+    "status": 200,
+    "ok": true,
+    "url": "https://api.airroi.com/markets/summary",
+    "error": null,
+    "ts": "2026-08-08T00:07:05.381132+00:00"
+  },
+  {
+    "name": "market_summary_north_canberra",
+    "status": 200,
+    "ok": true,
+    "url": "https://api.airroi.com/markets/summary",
+    "error": null,
+    "ts": "2026-08-08T00:07:07.960291+00:00"
+  },
+  {
+    "name": "market_summary_canberra",
+    "status": 200,
+    "ok": true,
+    "url": "https://api.airroi.com/markets/summary",
+    "error": null,
+    "ts": "2026-08-08T00:07:10.607187+00:00"
+  },
+  {
+    "name": "market_metrics_belconnen",
+    "status": 200,
+    "ok": true,
+    "url": "https://api.airroi.com/markets/metrics/all",
+    "error": null,
+    "ts": "2026-08-08T00:07:14.287817+00:00"
+  },
+  {
+    "name": "calculator_estimate",
+    "status": 200,
+    "ok": true,
+    "url": "https://api.airroi.com/calculator/estimate?lat=-35.236&lng=149.033&bedrooms=4&baths=2.0&guests=8&currency=native",
+    "error": null,
+    "ts": "2026-08-08T00:07:15.275008+00:00"
+  },
+  {
+    "name": "comparables",
+    "status": 200,
+    "ok": true,
+    "url": "https://api.airroi.com/listings/comparables?latitude=-35.236&longitude=149.033&bedrooms=4&baths=2.0&guests=8&currency=native",
+    "error": null,
+    "ts": "2026-08-08T00:07:15.841839+00:00"
+  },
+  {
+    "name": "listings_search_radius",
+    "status": 200,
+    "ok": true,
+    "url": "https://api.airroi.com/listings/search/radius",
+    "error": null,
+    "ts": "2026-08-08T00:07:16.269552+00:00"
+  }
+]

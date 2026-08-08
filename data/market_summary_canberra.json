@@ -1,0 +1,16 @@
+{
+  "market": {
+    "country": "Australia",
+    "region": "Australian Capital Territory",
+    "locality": "Canberra",
+    "district": null
+  },
+  "occupancy": 0.49,
+  "average_daily_rate": 257.4,
+  "rev_par": 120.5,
+  "revenue": 29825.7,
+  "booking_lead_time": 48.5,
+  "length_of_stay": 4.5,
+  "min_nights": 3.4,
+  "active_listings_count": 305.0
+}
