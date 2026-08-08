@@ -166,6 +166,68 @@ def advanced(inp: dict, scenarios: dict, ltr: dict) -> dict:
     }
 
 
+def projection(inp: dict, scenarios: dict, ltr: dict) -> dict:
+    """10-year, all-cash wealth build: after-tax cash flow + equity growth, STR vs LTR."""
+    pj = inp["projection"]
+    years = pj["years"]; start = pj["start_year"]
+    ig = pj["income_growth_rate"]; ci = pj["cost_inflation_rate"]
+    value0 = inp["property"]["market_value"]; growth = inp["capital_growth_rate"]
+    mrate = inp["tax"]["marginal_rate"]; furn = inp["setup_capex"]["furnishing_and_setup"]
+    OC = inp["operating_costs"]; L = inp["long_term_rental"]
+    plat = OC["platform_fee_pct"]; mgmt = OC["management_fee_pct_of_revenue"]
+    fixed0 = sum(OC[k] for k in ("utilities_internet_annual", "insurance_annual", "consumables_annual",
+                                 "maintenance_annual", "council_rates_annual", "listing_supplies_annual"))
+    base = inp["str"]["scenarios"]["base"]
+    gross0 = base["gross_revenue"]
+    ltr_gross0 = L["weekly_rent"] * (52 - L["annual_vacancy_weeks"])
+    ltr_fixed0 = L["annual_maintenance"] + L["council_rates_annual"] + L["insurance_annual"]
+    dep_s = inp["tax"]["str_depreciation_annual"]; dep_l = inp["tax"]["ltr_depreciation_annual"]
+
+    def levy_for(year):
+        return inp["str"]["act_levy_rate_2027"] if year >= 2027 else inp["str"]["act_levy_rate"]
+
+    def series(kind):
+        rows = []; cum = 0.0
+        for t in range(1, years + 1):
+            year = start + t - 1
+            gi = (1 + ig) ** (t - 1); ck = (1 + ci) ** (t - 1)
+            if kind == "ltr":
+                gross = ltr_gross0 * gi
+                noi = gross * (1 - L["mgmt_fee_pct"]) - ltr_fixed0 * ck
+                dep = dep_l
+            else:
+                gross = gross0 * gi
+                m = 0.0 if kind == "str_self" else mgmt
+                noi = gross * (1 - levy_for(year) - plat - m) - fixed0 * ck
+                dep = dep_s
+            tax = (noi - dep) * mrate
+            after_tax = noi - tax
+            cum += after_tax
+            value_t = value0 * (1 + growth) ** t
+            capex = furn if kind != "ltr" else 0
+            wealth = value_t + cum - capex
+            rows.append({"year": year, "noi": round(noi), "after_tax_cash": round(after_tax),
+                         "cumulative_cash": round(cum), "property_value": round(value_t),
+                         "total_wealth": round(wealth)})
+        return rows
+
+    out = {k: series(k) for k in ("str_self", "str_managed", "ltr")}
+    y = years - 1
+    return {
+        "assumptions": {"years": years, "start_year": start, "income_growth": ig,
+                        "cost_inflation": ci, "capital_growth": growth, "basis": "all-cash, after-tax"},
+        "series": out,
+        "summary_year10": {
+            "property_value": out["ltr"][y]["property_value"],
+            "capital_gain_10yr": round(out["ltr"][y]["property_value"] - value0),
+            "cumulative_cash": {k: out[k][y]["cumulative_cash"] for k in out},
+            "total_wealth": {k: out[k][y]["total_wealth"] for k in out},
+            "str_self_vs_ltr_wealth": round(out["str_self"][y]["total_wealth"] - out["ltr"][y]["total_wealth"]),
+            "str_managed_vs_ltr_wealth": round(out["str_managed"][y]["total_wealth"] - out["ltr"][y]["total_wealth"]),
+        },
+    }
+
+
 def run(inp: dict) -> dict:
     levy = inp["str"]["act_levy_rate"]
     levy_2027 = inp["str"].get("act_levy_rate_2027", levy)
@@ -205,6 +267,7 @@ def run(inp: dict) -> dict:
             "gross_revenue_to_cover_costs": round(cover_gross, 0),
         },
         "advanced": advanced(inp, scenarios, ltr),
+        "projection_10yr": projection(inp, scenarios, ltr),
     }
 
 
@@ -242,6 +305,15 @@ def print_table(res: dict) -> None:
         print(f"  {label:9}: STR CoC(after-tax) {s['cash_on_cash_aftertax_pct']:>5.1f}% "
               f"total {s['total_return_pct']:>5.1f}%   |   LTR CoC {l['cash_on_cash_aftertax_pct']:>5.1f}% "
               f"total {l['total_return_pct']:>5.1f}%   (equity {cur}{s['equity_invested']:,.0f})")
+
+    pj = res["projection_10yr"]["summary_year10"]
+    print(f"\n--- 10-year wealth (all-cash, after-tax) ---")
+    print(f"Property value yr10 {cur} {pj['property_value']:,.0f} "
+          f"(capital gain +{cur} {pj['capital_gain_10yr']:,.0f}, common to all)")
+    print(f"Cumulative after-tax cash: self {cur} {pj['cumulative_cash']['str_self']:,.0f} | "
+          f"managed {cur} {pj['cumulative_cash']['str_managed']:,.0f} | LTR {cur} {pj['cumulative_cash']['ltr']:,.0f}")
+    print(f"Total wealth vs LTR: self-managed {cur} {pj['str_self_vs_ltr_wealth']:+,.0f} | "
+          f"managed {cur} {pj['str_managed_vs_ltr_wealth']:+,.0f}")
 
 
 def main() -> None:

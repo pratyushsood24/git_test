@@ -16,14 +16,18 @@ deliverables/report.html          Interactive decision report (open in a browser
 deliverables/canberra_str_model.xlsx  Editable financial model (blue cells = your levers)
 ```
 
-## Deliverables
-- **`deliverables/report.html`** — the decision report: verdict, scenario returns vs long-term
-  rent, cost waterfall, comparables dispersion, sensitivity heatmap, seasonality, market context,
-  regulatory & risk. Theme-aware and self-contained.
-- **`deliverables/canberra_str_model.xlsx`** — Summary / Inputs / Scenarios / Sensitivity /
-  **Management** (self-managed vs managed) / **Leverage & Tax** (cash-on-cash + after-tax total
-  return by LVR) tabs. Edit the blue cells and every result recalculates. Rebuild with
-  `python scripts/build_xlsx.py`. 169 formulas, verified against `analysis/model.py`;
+## Deliverables (`deliverables/`)
+- **`report.html`** — the interactive decision report: verdict, scenario returns vs long-term
+  rent, cost waterfall, comparables dispersion, sensitivity heatmap, seasonality, management swing,
+  financing/tax/total-return, 10-year wealth projection, market context, regulatory & risk.
+  Theme-aware and self-contained. Rebuild: `python scripts/build_report.py` (data in `/tmp` — see script).
+- **`Canberra_STR_Report.pdf`** — print-ready PDF of the full report (~14 pages).
+- **`Canberra_STR_Executive_Summary.pdf`** (+ `.html`) — one-page summary: verdict, key numbers,
+  scenarios, 10-year wealth, leverage, risks, recommendation.
+- **`canberra_str_model.xlsx`** — 7 tabs: Summary / Inputs / Scenarios / Sensitivity /
+  **Management** (self vs managed) / **Leverage & Tax** (cash-on-cash + after-tax total return by
+  LVR) / **10-Year Projection**. Edit the blue Inputs cells → everything recalculates. Rebuild:
+  `python scripts/build_xlsx.py`. 272 formulas (IF/SUM only), verified against `analysis/model.py`;
   force-recalculates on open.
 
 ## Headline result (AirROI data, 8 Aug 2026)

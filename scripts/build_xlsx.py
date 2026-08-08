@@ -91,6 +91,8 @@ row('Marginal tax rate (incl Medicare)', TAX['marginal_rate'], 'mtax', PCT, key=
 row('STR depreciation (annual)', TAX['str_depreciation_annual'], 'deps', CUR, note='new $30k fit-out')
 row('LTR depreciation (annual)', TAX['ltr_depreciation_annual'], 'depl', CUR, note='minimal, older home')
 row('Capital growth rate (p.a.)', GROW, 'grow', PCT, key=True, note='common to STR & LTR')
+row('Income growth (rent/rev, p.a.)', inp['projection']['income_growth_rate'], 'ig', PCT)
+row('Cost inflation (p.a.)', inp['projection']['cost_inflation_rate'], 'ci', PCT)
 section('Long-term rental baseline')
 row('Weekly rent', L['weekly_rent'], 'wrent', CUR, key=True, note='USER-PROVIDED')
 row('Vacancy (weeks/year)', L['annual_vacancy_weeks'], 'vac', font=BLUE)
@@ -242,6 +244,54 @@ end1 = block(4, 'Base STR (managed)', SC_NOI_BASE, ref('deps'), ref('furn'))
 end2 = block(end1 + 2, 'Long-term rental', SC_LTR_NOI, ref('depl'), 0)
 lv.cell(end2 + 2, 1, 'Negative cash-on-cash under leverage = negative gearing (loss offsets other income at your marginal rate). Total return rises with leverage because it amplifies capital growth on a smaller equity base. Indicative only — not tax advice.').font = SMALL
 
+# ---------------- 10-Year Projection ----------------
+pj = wb.create_sheet('10-Year Projection')
+pj['A1'] = '10-Year Wealth Projection (all-cash, after-tax)'; pj['A1'].font = TITLE
+pj['A2'] = 'Rent/revenue grow at income growth; costs at cost inflation; levy steps to 7.5% in 2027; capital growth on value.'; pj['A2'].font = ITAL
+start = inp['projection']['start_year']; yrs = inp['projection']['years']
+heads = ['Year', 'STR self cash', 'STR self cum', 'STR mgd cash', 'STR mgd cum',
+         'LTR cash', 'LTR cum', 'Property value', 'Wealth: self', 'Wealth: mgd', 'Wealth: LTR']
+for j, h in enumerate(heads):
+    cc = pj.cell(4, j + 1, h); cc.font = WB_; cc.fill = HDR
+    cc.alignment = Alignment(horizontal='center' if j else 'left')
+    pj.column_dimensions[get_column_letter(j + 1)].width = 14 if j else 8
+value0 = ref('value')
+plat_mgmt = f"{ref('plat')}+{ref('mgmt')}"
+FIXe = lambda t: f"{FIX}*(1+{ref('ci')})^({t}-1)"          # inflated STR fixed opex
+LTRFIX = f"({ref('lmaint')}+{ref('lrates')}+{ref('lins')})"
+base_gross = SC_REV_BASE
+for t in range(1, yrs + 1):
+    r = 4 + t; yr = start + t - 1
+    Y = get_column_letter(1)  # A
+    pj.cell(r, 1, yr).font = BLACK
+    gi = f"(1+{ref('ig')})^({t}-1)"; ck = f"(1+{ref('ci')})^({t}-1)"
+    levy = f"IF({yr}>=2027,{ref('levy27')},{ref('levy')})"
+    # STR self (mgmt=0): NOI = gross*gi*(1-levy-plat) - fixed*ck ; after-tax = NOI - (NOI-dep)*mtax
+    noi_self = f"({base_gross}*{gi}*(1-{levy}-{ref('plat')})-{FIXe(t)})"
+    noi_mgd = f"({base_gross}*{gi}*(1-{levy}-{plat_mgmt})-{FIXe(t)})"
+    noi_ltr = f"({SC_LTR_NOI}/1)"  # placeholder; use escalated below
+    ltr_gross = f"{ref('wrent')}*(52-{ref('vac')})*{gi}"
+    noi_ltr = f"({ltr_gross}*(1-{ref('lmgmt')})-{LTRFIX}*{ck})"
+    at = lambda noi, dep: f"({noi}-({noi}-{dep})*{ref('mtax')})"
+    pj.cell(r, 2, f"={at(noi_self, ref('deps'))}").number_format = CUR
+    pj.cell(r, 3, (f"=B{r}" if t == 1 else f"=C{r-1}+B{r}")).number_format = CUR
+    pj.cell(r, 4, f"={at(noi_mgd, ref('deps'))}").number_format = CUR
+    pj.cell(r, 5, (f"=D{r}" if t == 1 else f"=E{r-1}+D{r}")).number_format = CUR
+    pj.cell(r, 6, f"={at(noi_ltr, ref('depl'))}").number_format = CUR
+    pj.cell(r, 7, (f"=F{r}" if t == 1 else f"=G{r-1}+F{r}")).number_format = CUR
+    pj.cell(r, 8, f"={value0}*(1+{ref('grow')})^{t}").number_format = CUR
+    pj.cell(r, 9, f"=H{r}+C{r}-{ref('furn')}").number_format = CUR
+    pj.cell(r, 10, f"=H{r}+E{r}-{ref('furn')}").number_format = CUR
+    pj.cell(r, 11, f"=H{r}+G{r}").number_format = CUR
+r10 = 4 + yrs
+pj.cell(r10 + 2, 1, 'Year-10 total wealth vs LTR:').font = BOLD
+pj.cell(r10 + 2, 9, f"=I{r10}-K{r10}").number_format = CUR; pj.cell(r10 + 2, 9).font = BOLD; pj.cell(r10 + 2, 9).fill = YEL
+pj.cell(r10 + 2, 10, f"=J{r10}-K{r10}").number_format = CUR; pj.cell(r10 + 2, 10).font = BOLD; pj.cell(r10 + 2, 10).fill = YEL
+pj.cell(r10 + 3, 1, 'Capital gain over 10 yrs (common to all):').font = BLACK
+pj.cell(r10 + 3, 8, f"=H{r10}-{value0}").number_format = CUR
+pj.cell(r10 + 4, 1, 'Wealth: self = value + cumulative self-managed cash − furnishing. Growth dominates and is identical for all three.').font = SMALL
+PJ_SELF_VS = f"'10-Year Projection'!I{r10+2}"
+
 # ---------------- Summary ----------------
 su = wb.create_sheet('Summary', 0)
 su.column_dimensions['A'].width = 46; su.column_dimensions['B'].width = 15
@@ -259,7 +309,8 @@ data = [('Property value', f"={ref('value')}", CUR), ('', None, None),
     ('STR base net yield', f"={SC_NOI_BASE}/{ref('value')}", PCT2),
     ('LTR net yield', f"={SC_LTR_NOI}/{ref('value')}", PCT2),
     ('Break-even occupancy to match LTR', f"=Scenarios!B{be}/({ref('adr_b')}*365)", PCT),
-    ("Total return on equity (all-cash, STR)", "='Leverage & Tax'!B14", PCT2)]
+    ("Total return on equity (all-cash, STR)", "='Leverage & Tax'!B14", PCT2),
+    ("10-yr wealth: self-managed STR vs LTR", PJ_SELF_VS, CUR)]
 rr = 4
 for lbl, fn, fmt in data:
     su.cell(rr, 1, lbl).font = BLACK

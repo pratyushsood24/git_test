@@ -74,6 +74,13 @@
     "negative_gearing_available": true,
     "negative_gearing_note": "You already own the property, so you are grandfathered under the negative-gearing changes announced 12 May 2026 (abolition from 1 Jul 2027 applies to established dwellings bought after that date). Net rental losses can offset other income at your marginal rate."
   },
+  "projection": {
+    "years": 10,
+    "start_year": 2026,
+    "income_growth_rate": 0.03,
+    "cost_inflation_rate": 0.03,
+    "_note": "Rent & STR revenue escalate at income_growth; operating costs at cost_inflation. Levy steps 5%->7.5% from 2027. All-cash basis for wealth (leverage amplifies but is shown separately). Furnishing $30k spent upfront (STR); a mid-life refresh is not separately modelled."
+  },
   "capital_growth_rate": 0.035,
   "capital_growth_source": "ASSUMPTION — Belconnen ~3.2% 5-yr CAGR (htag/estait 2026); long-run ACT house growth. IDENTICAL for STR vs LTR (same house), so it is common to both, not a differentiator.",
   "tax_disclaimer": "Indicative only, not tax advice. Australian property tax is fact-specific (main-residence history, holiday-home 'main use' test, land tax, GST is input-taxed for residential). Confirm with a registered tax agent before deciding."
