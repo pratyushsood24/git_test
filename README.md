@@ -7,11 +7,29 @@ scenarios/frameworks behind an informed decision.
 
 ## Layout
 ```
-scripts/airroi_pull.py       AirROI API client (key via env var; saves raw JSON to data/)
-analysis/inputs.example.json Template of every model input, with sources/assumptions labelled
-analysis/model.py            STR-vs-LTR calculation engine -> analysis/results.json
-data/                        Raw AirROI responses + normalized comps (created at run time)
+scripts/airroi_pull.py            AirROI API client (key via env var; saves raw JSON to data/)
+analysis/inputs.example.json      Template of every model input, with sources/assumptions labelled
+analysis/inputs.json              The live inputs (real property numbers + AirROI-anchored scenarios)
+analysis/model.py                 STR-vs-LTR calculation engine -> analysis/results.json
+data/                             Raw AirROI responses (market summaries, calculator, 25 comps, seasonality)
+deliverables/report.html          Interactive decision report (open in a browser / published as an Artifact)
+deliverables/canberra_str_model.xlsx  Editable financial model (blue cells = your levers)
 ```
+
+## Deliverables
+- **`deliverables/report.html`** — the decision report: verdict, scenario returns vs long-term
+  rent, cost waterfall, comparables dispersion, sensitivity heatmap, seasonality, market context,
+  regulatory & risk. Theme-aware and self-contained.
+- **`deliverables/canberra_str_model.xlsx`** — Summary / Inputs / Scenarios / Sensitivity tabs.
+  Edit the blue cells (value, ADR, occupancy, costs, rent) and every result recalculates.
+  Formulas verified against `analysis/model.py`; the file force-recalculates on open.
+
+## Headline result (AirROI data, 8 Aug 2026)
+For this 4bd/2ba home, AirROI projects ~**$62k median** annual STR revenue (p25 $38k / p75 $87k),
+ADR ~$346–383, occupancy ~52%. After costs and the 5% ACT levy that nets ~**$27k** — essentially
+**line-ball with a $750/wk long-term rent (~$28.6k)**. STR only clearly wins with top-quartile
+execution (~$45k NOI). Break-even vs long-term rent ≈ 51% occupancy. Both are low yields on a $1M
+asset — Canberra is a capital-growth, low-yield market.
 
 ## Prerequisites
 - **AirROI API key** — export it, never commit it:
@@ -53,7 +71,12 @@ python analysis/model.py --inputs analysis/inputs.json
   `ASSUMPTION`-tagged values with AirROI pulls and your own actuals before relying on results.
 - All figures are **AUD**; the report states the source for each number.
 
+## API notes (verified against the live API)
+- Base `https://api.airroi.com`; auth via the **`x-api-key`** header (no `Authorization` header —
+  API Gateway parses it as AWS SigV4 and rejects the call).
+- Market endpoints are **POST** with a `{market:{country,region,locality,district}, currency, num_months}`
+  body; `calculator/estimate` and `listings/comparables` are **GET** with `bedrooms/baths/guests`.
+- `currency=native` returns AUD. The property resolves to the *Higgins, District of Belconnen* market.
+
 ## Status
-Scaffold + calculation engine complete and tested. Pending: AirROI API key + domain
-allowlist, your property/financial inputs, then the AirROI data pull, the .xlsx model,
-and the interactive HTML report.
+Complete: data pulled, model built and verified, both deliverables produced and pushed.
