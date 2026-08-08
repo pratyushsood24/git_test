@@ -186,18 +186,56 @@ mark{background:var(--accent-soft);color:var(--ink);padding:0 3px;border-radius:
 </section>
 
 <section>
-  <div class="sec-head"><span class="n">04</span><h2>Market context</h2><p>AirROI trailing-12-month averages (all property sizes)</p></div>
+  <div class="sec-head"><span class="n">04</span><h2>Management is the swing factor</h2></div>
+  <p class="lead" style="margin-bottom:18px">The single biggest lever in the whole model isn't occupancy — it's <b>who runs it</b>. A full-service manager takes ~18% of revenue. Do it yourself and that money is yours, which is what tips the median case decisively past long-term rent.</p>
+  <div class="grid2">
+    <div class="card"><figure><div id="chart-mgmt"></div></figure>
+      <div class="legend">
+        <span><span class="sw" style="background:var(--mid)"></span>Professionally managed (−18%)</span>
+        <span><span class="sw" style="background:var(--up)"></span>Self-managed</span>
+        <span><span class="dash"></span>Long-term rent NOI</span>
+      </div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;justify-content:center;gap:14px">
+      <div><div class="stat" style="padding:0"><div class="k">Self-managing adds</div><div class="v up" id="mgmt-delta"></div><div class="s">per year vs a manager — for your time on guest comms, cleaning coordination & pricing</div></div></div>
+      <p style="font-size:14px;color:var(--secondary);border-top:1px solid var(--line);padding-top:14px">Managed, the base case is line-ball with long-term rent. <b>Self-managed, it clears it comfortably</b> — but you take on the operating work a long-term tenant would never create. That trade — roughly $11k/yr for a part-time job — is the real question behind "should I do this."</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">05</span><h2>Financing, tax &amp; total return</h2></div>
+  <p class="lead" style="margin-bottom:14px">Layering in a mortgage, your marginal tax rate, and capital growth. One thing to hold onto: <mark>capital growth is identical whether you let short- or long-term</mark> — same house, same market — so it's a wash between the two, and the bulk of your wealth here comes from the asset appreciating, not the letting strategy.</p>
+  <div class="card">
+    <div class="tw"><table id="lev-table"></table></div>
+    <p class="foot-note" id="lev-note"></p>
+  </div>
+  <div class="grid2" style="margin-top:20px">
+    <div class="card"><h3>Total return on equity — STR vs long-term</h3>
+      <p class="cap">After-tax cash yield + capital growth, by how much you borrow. Bars converge because growth dominates and is common to both.</p>
+      <figure><div id="chart-total"></div></figure>
+      <div class="legend"><span><span class="sw" style="background:var(--mid)"></span>Short-term (self-manage upside not shown)</span><span><span class="sw" style="background:var(--ltr)"></span>Long-term rent</span></div>
+    </div>
+    <div class="card">
+      <h3>What the tax layer means</h3>
+      <ul class="src" style="padding-left:18px;margin:8px 0 0;font-size:13px" id="tax-notes"></ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">06</span><h2>Market context</h2><p>AirROI trailing-12-month averages (all property sizes)</p></div>
   <div class="tw"><table id="market-table"></table></div>
   <p class="foot-note">Market averages blend all sizes — mostly 1–2 bedroom units — so they read low. A 4-bedroom home like this one sits well above them, which is why the property-specific projection ($383 ADR) is the right anchor, not the ~$230 market ADR.</p>
 </section>
 
 <section>
-  <div class="sec-head"><span class="n">05</span><h2>Regulatory &amp; risk</h2></div>
+  <div class="sec-head"><span class="n">07</span><h2>Regulatory &amp; risk</h2></div>
   <div class="risks" id="risks"></div>
 </section>
 
 <section>
-  <div class="sec-head"><span class="n">06</span><h2>Assumptions &amp; sources</h2></div>
+  <div class="sec-head"><span class="n">08</span><h2>Assumptions &amp; sources</h2></div>
   <div class="grid2">
     <div class="card">
       <h3>Key assumptions</h3>
@@ -222,7 +260,7 @@ mark{background:var(--accent-soft);color:var(--ink);padding:0 3px;border-radius:
 <div id="tip"></div>
 
 <script>
-const DATA = {"property":{"address":"54 Ashburner St, Higgins ACT 2615","market":"Higgins, District of Belconnen, ACT, Australia","market_value":1000000,"market_value_source":"USER-PROVIDED","bedrooms":4,"bathrooms":2,"max_guests":8,"parking":"4 (driveway)"},"scenarios":{"conservative":{"occupancy":0.36,"nights_booked":131.0,"adr":251,"gross_revenue":38005,"act_levy":1900.0,"platform_fee":1140.0,"management_fee":6841.0,"fixed_opex":18900,"total_costs":28781.0,"noi":9224.0,"capex_amortized":6000.0,"net_after_amort":3224.0,"mortgage_interest":0.0,"cash_flow":3224.0,"gross_yield_pct":3.8,"net_yield_pct":0.92,"cap_rate_pct":0.92,"cash_on_cash_pct":0.31},"base":{"occupancy":0.52,"nights_booked":190.0,"adr":346,"gross_revenue":62033,"act_levy":3102.0,"platform_fee":1861.0,"management_fee":11166.0,"fixed_opex":18900,"total_costs":35029.0,"noi":27004.0,"capex_amortized":6000.0,"net_after_amort":21004.0,"mortgage_interest":0.0,"cash_flow":21004.0,"gross_yield_pct":6.2,"net_yield_pct":2.7,"cap_rate_pct":2.7,"cash_on_cash_pct":2.04},"aggressive":{"occupancy":0.67,"nights_booked":245.0,"adr":456,"gross_revenue":86899,"act_levy":4345.0,"platform_fee":2607.0,"management_fee":15642.0,"fixed_opex":18900,"total_costs":41494.0,"noi":45405.0,"capex_amortized":6000.0,"net_after_amort":39405.0,"mortgage_interest":0.0,"cash_flow":39405.0,"gross_yield_pct":8.69,"net_yield_pct":4.54,"cap_rate_pct":4.54,"cash_on_cash_pct":3.83}},"scenarios_2027":{"conservative":{"occupancy":0.36,"nights_booked":131.0,"adr":251,"gross_revenue":38005,"act_levy":2850.0,"platform_fee":1140.0,"management_fee":6841.0,"fixed_opex":18900,"total_costs":29731.0,"noi":8274.0,"capex_amortized":6000.0,"net_after_amort":2274.0,"mortgage_interest":0.0,"cash_flow":2274.0,"gross_yield_pct":3.8,"net_yield_pct":0.83,"cap_rate_pct":0.83,"cash_on_cash_pct":0.22},"base":{"occupancy":0.52,"nights_booked":190.0,"adr":346,"gross_revenue":62033,"act_levy":4652.0,"platform_fee":1861.0,"management_fee":11166.0,"fixed_opex":18900,"total_costs":36579.0,"noi":25454.0,"capex_amortized":6000.0,"net_after_amort":19454.0,"mortgage_interest":0.0,"cash_flow":19454.0,"gross_yield_pct":6.2,"net_yield_pct":2.55,"cap_rate_pct":2.55,"cash_on_cash_pct":1.89},"aggressive":{"occupancy":0.67,"nights_booked":245.0,"adr":456,"gross_revenue":86899,"act_levy":6517.0,"platform_fee":2607.0,"management_fee":15642.0,"fixed_opex":18900,"total_costs":43666.0,"noi":43233.0,"capex_amortized":6000.0,"net_after_amort":37233.0,"mortgage_interest":0.0,"cash_flow":37233.0,"gross_yield_pct":8.69,"net_yield_pct":4.32,"cap_rate_pct":4.32,"cash_on_cash_pct":3.61}},"ltr":{"weekly_rent":750,"weeks_let":50,"gross_income":37500,"total_costs":8925.0,"noi":28575.0,"gross_yield_pct":3.75,"net_yield_pct":2.86},"compare":{"str_net_noi":27004.0,"ltr_net_noi":28575.0,"str_advantage_pre_amort":-1571.0,"str_advantage_after_amort":-7571.0,"payback_years_on_setup":null},"breakeven":{"gross_revenue_to_match_ltr":64155.0,"occupancy_to_match_ltr_at_base_adr":0.508,"nights_to_match_ltr_at_base_adr":185.0,"gross_revenue_to_cover_costs":25541.0},"calc":{"revenue":69246,"adr":383,"occ":0.518,"pct":{"revenue":{"avg":69246.21231650235,"p25":38005.05485751629,"p50":62032.82887453079,"p75":86899.32943313598,"p90":116298.05721181868},"average_daily_rate":{"avg":382.80240240439474,"p25":250.93831490474938,"p50":346.34944966739414,"p75":455.52516711241003,"p90":599.0336625301837},"occupancy":{"avg":0.5182292169054095,"p25":0.36049094035271845,"p50":0.5188652086695857,"p75":0.6719108695299542,"p90":0.7786151416763935}}},"markets":{"higgins":{"occ":0.55,"adr":188.0,"revpar":106.0,"revenue":30060.0,"listings":4.0},"belconnen":{"occ":0.47,"adr":230.0,"revpar":112.0,"revenue":28188.0,"listings":196.0},"north_canberra":{"occ":0.51,"adr":232.0,"revpar":121.0,"revenue":32332.0,"listings":404.0},"canberra":{"occ":0.49,"adr":257.0,"revpar":120.0,"revenue":29826.0,"listings":305.0}},"comps":[{"bd":4,"occ":0.184,"adr":446.0,"rev":39878.0},{"bd":4,"occ":0.578,"adr":374.0,"rev":90115.0},{"bd":4,"occ":0.148,"adr":306.0,"rev":18104.0},{"bd":4,"occ":0.247,"adr":348.0,"rev":34112.0},{"bd":4,"occ":0.258,"adr":461.0,"rev":54004.0},{"bd":4,"occ":0.216,"adr":564.0,"rev":61619.0},{"bd":4,"occ":0.318,"adr":370.0,"rev":46012.0},{"bd":4,"occ":0.115,"adr":566.0,"rev":26844.0},{"bd":4,"occ":0.195,"adr":516.0,"rev":38395.0},{"bd":4,"occ":0.559,"adr":307.0,"rev":72131.0},{"bd":4,"occ":0.712,"adr":344.0,"rev":101999.0},{"bd":4,"occ":0.427,"adr":476.0,"rev":86504.0},{"bd":3,"occ":0.244,"adr":274.0,"rev":25975.0},{"bd":3,"occ":0.51,"adr":318.0,"rev":67378.0},{"bd":4,"occ":0.14,"adr":360.0,"rev":21258.0},{"bd":3,"occ":0.362,"adr":313.0,"rev":46718.0},{"bd":3,"occ":0.145,"adr":236.0,"rev":14231.0},{"bd":3,"occ":0.145,"adr":295.0,"rev":18788.0},{"bd":5,"occ":0.268,"adr":274.0,"rev":29556.0},{"bd":3,"occ":0.219,"adr":302.0,"rev":23340.0},{"bd":3,"occ":0.619,"adr":302.0,"rev":84058.0},{"bd":5,"occ":0.66,"adr":425.0,"rev":125927.0},{"bd":3,"occ":0.145,"adr":242.0,"rev":14127.0},{"bd":3,"occ":0.408,"adr":277.0,"rev":43654.0},{"bd":3,"occ":0.29,"adr":333.0,"rev":38620.0}],"seasonality":[0.0999,0.0751,0.0825,0.0861,0.0712,0.074,0.0903,0.0767,0.074,0.0853,0.082,0.1028]};
+const DATA = {"property":{"address":"54 Ashburner St, Higgins ACT 2615","market":"Higgins, District of Belconnen, ACT, Australia","market_value":1000000,"market_value_source":"USER-PROVIDED","bedrooms":4,"bathrooms":2,"max_guests":8,"parking":"4 (driveway)"},"scenarios":{"conservative":{"occupancy":0.36,"nights_booked":131.0,"adr":251,"gross_revenue":38005,"act_levy":1900.0,"platform_fee":1140.0,"management_fee":6841.0,"fixed_opex":18900,"total_costs":28781.0,"noi":9224.0,"capex_amortized":6000.0,"net_after_amort":3224.0,"mortgage_interest":0.0,"cash_flow":3224.0,"gross_yield_pct":3.8,"net_yield_pct":0.92,"cap_rate_pct":0.92,"cash_on_cash_pct":0.31},"base":{"occupancy":0.52,"nights_booked":190.0,"adr":346,"gross_revenue":62033,"act_levy":3102.0,"platform_fee":1861.0,"management_fee":11166.0,"fixed_opex":18900,"total_costs":35029.0,"noi":27004.0,"capex_amortized":6000.0,"net_after_amort":21004.0,"mortgage_interest":0.0,"cash_flow":21004.0,"gross_yield_pct":6.2,"net_yield_pct":2.7,"cap_rate_pct":2.7,"cash_on_cash_pct":2.04},"aggressive":{"occupancy":0.67,"nights_booked":245.0,"adr":456,"gross_revenue":86899,"act_levy":4345.0,"platform_fee":2607.0,"management_fee":15642.0,"fixed_opex":18900,"total_costs":41494.0,"noi":45405.0,"capex_amortized":6000.0,"net_after_amort":39405.0,"mortgage_interest":0.0,"cash_flow":39405.0,"gross_yield_pct":8.69,"net_yield_pct":4.54,"cap_rate_pct":4.54,"cash_on_cash_pct":3.83}},"scenarios_2027":{"conservative":{"occupancy":0.36,"nights_booked":131.0,"adr":251,"gross_revenue":38005,"act_levy":2850.0,"platform_fee":1140.0,"management_fee":6841.0,"fixed_opex":18900,"total_costs":29731.0,"noi":8274.0,"capex_amortized":6000.0,"net_after_amort":2274.0,"mortgage_interest":0.0,"cash_flow":2274.0,"gross_yield_pct":3.8,"net_yield_pct":0.83,"cap_rate_pct":0.83,"cash_on_cash_pct":0.22},"base":{"occupancy":0.52,"nights_booked":190.0,"adr":346,"gross_revenue":62033,"act_levy":4652.0,"platform_fee":1861.0,"management_fee":11166.0,"fixed_opex":18900,"total_costs":36579.0,"noi":25454.0,"capex_amortized":6000.0,"net_after_amort":19454.0,"mortgage_interest":0.0,"cash_flow":19454.0,"gross_yield_pct":6.2,"net_yield_pct":2.55,"cap_rate_pct":2.55,"cash_on_cash_pct":1.89},"aggressive":{"occupancy":0.67,"nights_booked":245.0,"adr":456,"gross_revenue":86899,"act_levy":6517.0,"platform_fee":2607.0,"management_fee":15642.0,"fixed_opex":18900,"total_costs":43666.0,"noi":43233.0,"capex_amortized":6000.0,"net_after_amort":37233.0,"mortgage_interest":0.0,"cash_flow":37233.0,"gross_yield_pct":8.69,"net_yield_pct":4.32,"cap_rate_pct":4.32,"cash_on_cash_pct":3.61}},"ltr":{"weekly_rent":750,"weeks_let":50,"gross_income":37500,"total_costs":8925.0,"noi":28575.0,"gross_yield_pct":3.75,"net_yield_pct":2.86},"compare":{"str_net_noi":27004.0,"ltr_net_noi":28575.0,"str_advantage_pre_amort":-1571.0,"str_advantage_after_amort":-7571.0,"payback_years_on_setup":null},"breakeven":{"gross_revenue_to_match_ltr":64155.0,"occupancy_to_match_ltr_at_base_adr":0.508,"nights_to_match_ltr_at_base_adr":185.0,"gross_revenue_to_cover_costs":25541.0},"calc":{"revenue":69246,"adr":383,"occ":0.518,"pct":{"revenue":{"avg":69246.21231650235,"p25":38005.05485751629,"p50":62032.82887453079,"p75":86899.32943313598,"p90":116298.05721181868},"average_daily_rate":{"avg":382.80240240439474,"p25":250.93831490474938,"p50":346.34944966739414,"p75":455.52516711241003,"p90":599.0336625301837},"occupancy":{"avg":0.5182292169054095,"p25":0.36049094035271845,"p50":0.5188652086695857,"p75":0.6719108695299542,"p90":0.7786151416763935}}},"markets":{"higgins":{"occ":0.55,"adr":188.0,"revpar":106.0,"revenue":30060.0,"listings":4.0},"belconnen":{"occ":0.47,"adr":230.0,"revpar":112.0,"revenue":28188.0,"listings":196.0},"north_canberra":{"occ":0.51,"adr":232.0,"revpar":121.0,"revenue":32332.0,"listings":404.0},"canberra":{"occ":0.49,"adr":257.0,"revpar":120.0,"revenue":29826.0,"listings":305.0}},"comps":[{"bd":4,"occ":0.184,"adr":446.0,"rev":39878.0},{"bd":4,"occ":0.578,"adr":374.0,"rev":90115.0},{"bd":4,"occ":0.148,"adr":306.0,"rev":18104.0},{"bd":4,"occ":0.247,"adr":348.0,"rev":34112.0},{"bd":4,"occ":0.258,"adr":461.0,"rev":54004.0},{"bd":4,"occ":0.216,"adr":564.0,"rev":61619.0},{"bd":4,"occ":0.318,"adr":370.0,"rev":46012.0},{"bd":4,"occ":0.115,"adr":566.0,"rev":26844.0},{"bd":4,"occ":0.195,"adr":516.0,"rev":38395.0},{"bd":4,"occ":0.559,"adr":307.0,"rev":72131.0},{"bd":4,"occ":0.712,"adr":344.0,"rev":101999.0},{"bd":4,"occ":0.427,"adr":476.0,"rev":86504.0},{"bd":3,"occ":0.244,"adr":274.0,"rev":25975.0},{"bd":3,"occ":0.51,"adr":318.0,"rev":67378.0},{"bd":4,"occ":0.14,"adr":360.0,"rev":21258.0},{"bd":3,"occ":0.362,"adr":313.0,"rev":46718.0},{"bd":3,"occ":0.145,"adr":236.0,"rev":14231.0},{"bd":3,"occ":0.145,"adr":295.0,"rev":18788.0},{"bd":5,"occ":0.268,"adr":274.0,"rev":29556.0},{"bd":3,"occ":0.219,"adr":302.0,"rev":23340.0},{"bd":3,"occ":0.619,"adr":302.0,"rev":84058.0},{"bd":5,"occ":0.66,"adr":425.0,"rev":125927.0},{"bd":3,"occ":0.145,"adr":242.0,"rev":14127.0},{"bd":3,"occ":0.408,"adr":277.0,"rev":43654.0},{"bd":3,"occ":0.29,"adr":333.0,"rev":38620.0}],"seasonality":[0.0999,0.0751,0.0825,0.0861,0.0712,0.074,0.0903,0.0767,0.074,0.0853,0.082,0.1028],"advanced":{"management_comparison":{"managed":{"mgmt_fee":11166.0,"noi":27004.0,"net_yield_pct":2.7},"self_managed":{"mgmt_fee":0,"noi":38170.0,"net_yield_pct":3.82,"extra_income_vs_managed":11166.0}},"assumptions":{"interest_rate":0.062,"marginal_rate":0.39,"capital_growth_rate":0.035,"capital_gain_pa":35000,"str_depreciation":6000,"ltr_depreciation":2000,"note":"Indicative only, not tax advice. Australian property tax is fact-specific (main-residence history, holiday-home 'main use' test, land tax, GST is input-taxed for residential). Confirm with a registered tax agent before deciding."},"leverage_and_tax":{"str_base_managed":{"All-cash":{"lvr":0.0,"loan":0,"equity_invested":1030000,"interest":0,"pre_tax_cash_flow":27004,"taxable_income":21004,"tax_or_refund":8192,"after_tax_cash_flow":18812,"cash_on_cash_pretax_pct":2.62,"cash_on_cash_aftertax_pct":1.83,"capital_gain":35000,"total_return_pct":5.22},"60% LVR":{"lvr":0.6,"loan":600000,"equity_invested":430000,"interest":37200,"pre_tax_cash_flow":-10196,"taxable_income":-16196,"tax_or_refund":-6316,"after_tax_cash_flow":-3880,"cash_on_cash_pretax_pct":-2.37,"cash_on_cash_aftertax_pct":-0.9,"capital_gain":35000,"total_return_pct":7.24},"80% LVR":{"lvr":0.8,"loan":800000,"equity_invested":230000,"interest":49600,"pre_tax_cash_flow":-22596,"taxable_income":-28596,"tax_or_refund":-11152,"after_tax_cash_flow":-11444,"cash_on_cash_pretax_pct":-9.82,"cash_on_cash_aftertax_pct":-4.98,"capital_gain":35000,"total_return_pct":10.24}},"long_term_rental":{"All-cash":{"lvr":0.0,"loan":0,"equity_invested":1000000,"interest":0,"pre_tax_cash_flow":28575,"taxable_income":26575,"tax_or_refund":10364,"after_tax_cash_flow":18211,"cash_on_cash_pretax_pct":2.86,"cash_on_cash_aftertax_pct":1.82,"capital_gain":35000,"total_return_pct":5.32},"60% LVR":{"lvr":0.6,"loan":600000,"equity_invested":400000,"interest":37200,"pre_tax_cash_flow":-8625,"taxable_income":-10625,"tax_or_refund":-4144,"after_tax_cash_flow":-4481,"cash_on_cash_pretax_pct":-2.16,"cash_on_cash_aftertax_pct":-1.12,"capital_gain":35000,"total_return_pct":7.63},"80% LVR":{"lvr":0.8,"loan":800000,"equity_invested":200000,"interest":49600,"pre_tax_cash_flow":-21025,"taxable_income":-23025,"tax_or_refund":-8980,"after_tax_cash_flow":-12045,"cash_on_cash_pretax_pct":-10.51,"cash_on_cash_aftertax_pct":-6.02,"capital_gain":35000,"total_return_pct":11.48}}}}};
 const AUD=(n,d=0)=>'$'+Number(n).toLocaleString('en-AU',{maximumFractionDigits:d,minimumFractionDigits:d});
 const K=(n)=>'$'+(Math.round(n/1000))+'k';
 const PC=(n,d=0)=>(n*100).toFixed(d)+'%';
@@ -404,6 +442,77 @@ function hoverable(node,html){node.style.cursor='default';
       'font-size':11,'font-variant-numeric':'tabular-nums',fill:'var(--ink)','font-weight':600},PC(yld,1)));
   }));
   document.getElementById('chart-heat').appendChild(svg);
+})();
+
+/* ---- Chart: management self vs managed ---- */
+(()=>{const mc=DATA.advanced.management_comparison,ltr=DATA.ltr.noi;
+  const items=[['Managed',mc.managed.noi,'var(--mid)'],['Self-managed',mc.self_managed.noi,'var(--up)']];
+  const W=520,H=300,mL=58,mR=16,mT=16,mB=44;const iw=W-mL-mR,ih=H-mT-mB;
+  const max=Math.max(mc.self_managed.noi,ltr)*1.18;
+  const cx=i=>mL+iw*(i+0.5)/items.length;const bw=iw/items.length*0.44;const y=v=>mT+ih-ih*(v/max);
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img'});
+  for(let t=0;t<=max;t+=10000){svg.appendChild(el('line',{class:'gl',x1:mL,x2:W-mR,y1:y(t),y2:y(t)}));
+    svg.appendChild(el('text',{class:'axis',x:mL-7,y:y(t)+4,'text-anchor':'end'},K(t)));}
+  svg.appendChild(el('line',{class:'baseline',x1:mL,x2:W-mR,y1:y(0),y2:y(0)}));
+  items.forEach((it,i)=>{const[nm,v,col]=it;const by=y(v);
+    const r=el('rect',{x:cx(i)-bw/2,y:by,width:bw,height:y(0)-by,rx:5,fill:col});
+    hoverable(r,`<b>${nm}</b><br>Base-case NOI <b>${AUD(v)}</b>`);svg.appendChild(r);
+    svg.appendChild(el('text',{class:'lbl',x:cx(i),y:by-8,'text-anchor':'middle'},AUD(v)));
+    svg.appendChild(el('text',{class:'lbl-s',x:cx(i),y:H-16,'text-anchor':'middle'},nm));});
+  svg.appendChild(el('line',{x1:mL,x2:W-mR,y1:y(ltr),y2:y(ltr),stroke:'var(--ltr)','stroke-width':2,'stroke-dasharray':'7 5'}));
+  svg.appendChild(el('text',{x:W-mR,y:y(ltr)-6,'text-anchor':'end',fill:'var(--ltr)','font-size':11,'font-weight':650},`Long-term rent ${AUD(ltr)}`));
+  document.getElementById('chart-mgmt').appendChild(svg);
+  document.getElementById('mgmt-delta').textContent='+'+AUD(mc.self_managed.extra_income_vs_managed);
+})();
+
+/* ---- leverage & tax table ---- */
+(()=>{const lt=DATA.advanced.leverage_and_tax,a=DATA.advanced.assumptions;
+  const labels=Object.keys(lt.str_base_managed);
+  const rows=[
+    ['Loan',x=>AUD(x.loan)],['Your equity',x=>AUD(x.equity_invested)],
+    ['Interest cost',x=>AUD(-x.interest)],['Pre-tax cash flow',x=>AUD(x.pre_tax_cash_flow)],
+    ['Tax / (refund)',x=>x.tax_or_refund<=0?`<span class="pos">refund ${AUD(-x.tax_or_refund)}</span>`:AUD(-x.tax_or_refund)],
+    ['After-tax cash flow',x=>{const v=x.after_tax_cash_flow;return `<span class="${v>=0?'pos':'neg'}">${AUD(v)}</span>`;}],
+    ['Cash-on-cash (after tax)',x=>{const v=x.cash_on_cash_aftertax_pct;return `<span class="${v>=0?'pos':'neg'}">${v}%</span>`;}],
+    ['Capital gain @'+PC(a.capital_growth_rate,1),x=>AUD(x.capital_gain)],
+    ['Total return on equity',x=>`<b>${x.total_return_pct}%</b>`],
+  ];
+  let h='<thead><tr><th>Base STR (managed) — per year</th>'+labels.map(l=>`<th>${l}</th>`).join('')+'</tr></thead><tbody>';
+  rows.forEach(r=>{const hi=r[0]==='Total return on equity'?' class="hi"':'';
+    h+=`<tr${hi}><td>${r[0]}</td>`+labels.map(l=>`<td>${r[1](lt.str_base_managed[l])}</td>`).join('')+'</tr>';});
+  h+='</tbody>';document.getElementById('lev-table').innerHTML=h;
+  document.getElementById('lev-note').innerHTML=`Assumptions: interest ${PC(a.interest_rate,1)}, marginal tax ${PC(a.marginal_rate)}, capital growth ${PC(a.capital_growth_rate,1)} (=${AUD(a.capital_gain_pa)}/yr, identical for long-term rent). Negative cash-on-cash under leverage = negative gearing — the shortfall is funded by you but is tax-deductible and offset against other income. Not tax advice.`;
+})();
+
+/* ---- Chart: total return STR vs LTR by leverage ---- */
+(()=>{const lt=DATA.advanced.leverage_and_tax;const labels=Object.keys(lt.str_base_managed);
+  const W=520,H=300,mL=44,mR=14,mT=16,mB=44;const iw=W-mL-mR,ih=H-mT-mB;
+  const vals=labels.flatMap(l=>[lt.str_base_managed[l].total_return_pct,lt.long_term_rental[l].total_return_pct]);
+  const max=Math.max(...vals)*1.16;const y=v=>mT+ih-ih*(v/max);
+  const gx=i=>mL+iw*(i+0.5)/labels.length;const gw=iw/labels.length;const bw=gw*0.3;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img'});
+  for(let t=0;t<=max;t+=2){svg.appendChild(el('line',{class:'gl',x1:mL,x2:W-mR,y1:y(t),y2:y(t)}));
+    svg.appendChild(el('text',{class:'axis',x:mL-6,y:y(t)+4,'text-anchor':'end'},t+'%'));}
+  svg.appendChild(el('line',{class:'baseline',x1:mL,x2:W-mR,y1:y(0),y2:y(0)}));
+  labels.forEach((l,i)=>{const s=lt.str_base_managed[l].total_return_pct,ll=lt.long_term_rental[l].total_return_pct;
+    const pairs=[[s,'var(--mid)','STR',-1],[ll,'var(--ltr)','LTR',1]];
+    pairs.forEach(([v,col,nm,off])=>{const bx=gx(i)+off*bw/2-bw/2+off*1;
+      const r=el('rect',{x:bx,y:y(v),width:bw,height:y(0)-y(v),rx:4,fill:col});
+      hoverable(r,`<b>${nm} · ${l}</b><br>Total return ${v}%`);svg.appendChild(r);
+      svg.appendChild(el('text',{class:'lbl-s',x:bx+bw/2,y:y(v)-5,'text-anchor':'middle','font-size':10},v+'%'));});
+    svg.appendChild(el('text',{class:'lbl-s',x:gx(i),y:H-16,'text-anchor':'middle'},l));});
+  document.getElementById('chart-total').appendChild(svg);
+})();
+
+/* ---- tax notes ---- */
+(()=>{const n=[
+  'Both STR and long-term rental income are taxed at your <b>marginal rate</b> (~39% assumed). STR earns more gross but also carries more deductible cost and depreciation.',
+  'You already own the property, so you are <b>grandfathered for negative gearing</b> — under leverage the rental loss offsets your other income (the refund shown).',
+  'Depreciation is largely the <b>new $30k furnishings</b> (claimable because bought new); the ~1970s building likely predates the 1987 capital-works rule, so little building depreciation.',
+  'On sale, a <b>50% CGT discount</b> applies if held &gt;12 months. If this was ever your home, income use can affect the main-residence exemption — get advice.',
+  'Residential letting (short or long) is <b>input-taxed for GST</b> — no GST on rent, no credits. Watch the ATO holiday-home <b>“main use” test</b> if personal use is high.',
+];
+  document.getElementById('tax-notes').innerHTML=n.map(x=>`<li style="margin:6px 0">${x}</li>`).join('');
 })();
 
 /* ---- market table ---- */

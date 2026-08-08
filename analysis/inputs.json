@@ -59,5 +59,22 @@
     "annual_maintenance": 1500,
     "council_rates_annual": 3800,
     "insurance_annual": 1000
-  }
+  },
+  "leverage": {
+    "interest_rate": 0.062,
+    "interest_rate_source": "ASSUMPTION — typical AU investor variable rate; edit to your actual",
+    "scenarios": {"All-cash": 0.0, "60% LVR": 0.60, "80% LVR": 0.80}
+  },
+  "tax": {
+    "marginal_rate": 0.39,
+    "marginal_rate_note": "39% = 37% bracket ($135k-190k taxable) + 2% Medicare levy (2025-26). Edit to your bracket.",
+    "str_depreciation_annual": 6000,
+    "ltr_depreciation_annual": 2000,
+    "depreciation_note": "STR ≈ Div-40 decline on the new $30k furnishings/fit-out (claimable because bought new); LTR minimal — the ~1970s house likely predates the post-15-Sep-1987 capital-works (Div 43) rule, so little/no building depreciation. Confirm with a quantity surveyor's schedule + your accountant.",
+    "negative_gearing_available": true,
+    "negative_gearing_note": "You already own the property, so you are grandfathered under the negative-gearing changes announced 12 May 2026 (abolition from 1 Jul 2027 applies to established dwellings bought after that date). Net rental losses can offset other income at your marginal rate."
+  },
+  "capital_growth_rate": 0.035,
+  "capital_growth_source": "ASSUMPTION — Belconnen ~3.2% 5-yr CAGR (htag/estait 2026); long-run ACT house growth. IDENTICAL for STR vs LTR (same house), so it is common to both, not a differentiator.",
+  "tax_disclaimer": "Indicative only, not tax advice. Australian property tax is fact-specific (main-residence history, holiday-home 'main use' test, land tax, GST is input-taxed for residential). Confirm with a registered tax agent before deciding."
 }

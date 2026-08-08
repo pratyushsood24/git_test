@@ -20,9 +20,11 @@ deliverables/canberra_str_model.xlsx  Editable financial model (blue cells = you
 - **`deliverables/report.html`** — the decision report: verdict, scenario returns vs long-term
   rent, cost waterfall, comparables dispersion, sensitivity heatmap, seasonality, market context,
   regulatory & risk. Theme-aware and self-contained.
-- **`deliverables/canberra_str_model.xlsx`** — Summary / Inputs / Scenarios / Sensitivity tabs.
-  Edit the blue cells (value, ADR, occupancy, costs, rent) and every result recalculates.
-  Formulas verified against `analysis/model.py`; the file force-recalculates on open.
+- **`deliverables/canberra_str_model.xlsx`** — Summary / Inputs / Scenarios / Sensitivity /
+  **Management** (self-managed vs managed) / **Leverage & Tax** (cash-on-cash + after-tax total
+  return by LVR) tabs. Edit the blue cells and every result recalculates. Rebuild with
+  `python scripts/build_xlsx.py`. 169 formulas, verified against `analysis/model.py`;
+  force-recalculates on open.
 
 ## Headline result (AirROI data, 8 Aug 2026)
 For this 4bd/2ba home, AirROI projects ~**$62k median** annual STR revenue (p25 $38k / p75 $87k),
@@ -30,6 +32,13 @@ ADR ~$346–383, occupancy ~52%. After costs and the 5% ACT levy that nets ~**$2
 **line-ball with a $750/wk long-term rent (~$28.6k)**. STR only clearly wins with top-quartile
 execution (~$45k NOI). Break-even vs long-term rent ≈ 51% occupancy. Both are low yields on a $1M
 asset — Canberra is a capital-growth, low-yield market.
+
+**Decision drivers (added frameworks):** self-managing adds ~**$11k/yr** (drops the 18% fee) and
+tips the median case clearly past long-term rent. With capital growth (~3.5%, common to both) and
+leverage, STR and LTR **converge on total return** (~5.2% all-cash → ~10–11% at 80% LVR); leverage
+turns cash-on-cash negative (negative gearing) but amplifies growth. So the real question is
+whether you self-manage and whether the operating work is worth a modest income edge — the wealth
+comes mostly from the asset appreciating, which is identical either way.
 
 ## Prerequisites
 - **AirROI API key** — export it, never commit it:

@@ -106,6 +106,66 @@ def gross_revenue_to_match(inp: dict, target_noi: float, levy_rate: float) -> fl
     return (target_noi + fixed) / (1 - var_rate)
 
 
+def advanced(inp: dict, scenarios: dict, ltr: dict) -> dict:
+    """Management, leverage/cash-on-cash, and after-tax total-return frameworks."""
+    value = inp["property"]["market_value"]
+    furn = inp["setup_capex"]["furnishing_and_setup"]
+    base = scenarios["base"]
+
+    # --- 1. Self-managed vs professionally managed (base scenario) ---
+    inp_self = json.loads(json.dumps(inp)); inp_self["operating_costs"]["self_managed"] = True
+    base_self = str_scenario(inp_self, inp["str"]["scenarios"]["base"], inp["str"]["act_levy_rate"])
+    management = {
+        "managed": {"mgmt_fee": base["management_fee"], "noi": base["noi"],
+                    "net_yield_pct": base["net_yield_pct"]},
+        "self_managed": {"mgmt_fee": 0, "noi": base_self["noi"],
+                         "net_yield_pct": base_self["net_yield_pct"],
+                         "extra_income_vs_managed": round(base_self["noi"] - base["noi"], 0)},
+    }
+
+    # --- 2 & 3. Leverage + after-tax total return, STR(base, managed) vs LTR ---
+    rate = inp["leverage"]["interest_rate"]
+    mrate = inp["tax"]["marginal_rate"]
+    growth = inp["capital_growth_rate"]
+    dep_str = inp["tax"]["str_depreciation_annual"]
+    dep_ltr = inp["tax"]["ltr_depreciation_annual"]
+    capital_gain = value * growth
+
+    def leg(noi, dep, invest_extra):
+        rows = {}
+        for label, lvr in inp["leverage"]["scenarios"].items():
+            loan = value * lvr
+            equity = value * (1 - lvr) + invest_extra
+            interest = loan * rate
+            pre_tax_cash = noi - interest
+            taxable = noi - interest - dep
+            tax = taxable * mrate                     # negative => negative-gearing refund
+            after_tax_cash = pre_tax_cash - tax
+            rows[label] = {
+                "lvr": lvr, "loan": round(loan), "equity_invested": round(equity),
+                "interest": round(interest), "pre_tax_cash_flow": round(pre_tax_cash),
+                "taxable_income": round(taxable), "tax_or_refund": round(tax),
+                "after_tax_cash_flow": round(after_tax_cash),
+                "cash_on_cash_pretax_pct": round(100 * pre_tax_cash / equity, 2) if equity else None,
+                "cash_on_cash_aftertax_pct": round(100 * after_tax_cash / equity, 2) if equity else None,
+                "capital_gain": round(capital_gain),
+                "total_return_pct": round(100 * (after_tax_cash + capital_gain) / equity, 2) if equity else None,
+            }
+        return rows
+
+    return {
+        "management_comparison": management,
+        "assumptions": {"interest_rate": rate, "marginal_rate": mrate,
+                        "capital_growth_rate": growth, "capital_gain_pa": round(capital_gain),
+                        "str_depreciation": dep_str, "ltr_depreciation": dep_ltr,
+                        "note": inp.get("tax_disclaimer", "")},
+        "leverage_and_tax": {
+            "str_base_managed": leg(base["noi"], dep_str, furn),
+            "long_term_rental": leg(ltr["noi"], dep_ltr, 0),
+        },
+    }
+
+
 def run(inp: dict) -> dict:
     levy = inp["str"]["act_levy_rate"]
     levy_2027 = inp["str"].get("act_levy_rate_2027", levy)
@@ -144,6 +204,7 @@ def run(inp: dict) -> dict:
             "nights_to_match_ltr_at_base_adr": round(be_occ * NIGHTS_PER_YEAR, 0) if be_occ else None,
             "gross_revenue_to_cover_costs": round(cover_gross, 0),
         },
+        "advanced": advanced(inp, scenarios, ltr),
     }
 
 
@@ -165,6 +226,22 @@ def print_table(res: dict) -> None:
     print(f"Base-case STR vs LTR: {cur} {c['str_advantage_pre_amort']:+,.0f} pre-amort; "
           f"{cur} {c['str_advantage_after_amort']:+,.0f} after furnishing amort; "
           f"payback {c['payback_years_on_setup']} yrs")
+
+    adv = res["advanced"]; m = adv["management_comparison"]
+    print(f"\n--- Self-managed vs managed (base) ---")
+    print(f"Managed NOI {cur} {m['managed']['noi']:,.0f} ({m['managed']['net_yield_pct']}%)  |  "
+          f"Self-managed NOI {cur} {m['self_managed']['noi']:,.0f} ({m['self_managed']['net_yield_pct']}%)  "
+          f"→ +{cur} {m['self_managed']['extra_income_vs_managed']:,.0f}/yr for your time")
+    print(f"\n--- Leverage & after-tax total return (base STR, managed vs LTR) ---")
+    a = adv["assumptions"]
+    print(f"(rate {a['interest_rate']*100:.1f}%, tax {a['marginal_rate']*100:.0f}%, "
+          f"growth {a['capital_growth_rate']*100:.1f}% = {cur} {a['capital_gain_pa']:,.0f}/yr capital gain, common to both)")
+    for label in adv["leverage_and_tax"]["str_base_managed"]:
+        s = adv["leverage_and_tax"]["str_base_managed"][label]
+        l = adv["leverage_and_tax"]["long_term_rental"][label]
+        print(f"  {label:9}: STR CoC(after-tax) {s['cash_on_cash_aftertax_pct']:>5.1f}% "
+              f"total {s['total_return_pct']:>5.1f}%   |   LTR CoC {l['cash_on_cash_aftertax_pct']:>5.1f}% "
+              f"total {l['total_return_pct']:>5.1f}%   (equity {cur}{s['equity_invested']:,.0f})")
 
 
 def main() -> None:
