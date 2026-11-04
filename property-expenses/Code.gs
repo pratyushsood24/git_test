@@ -94,15 +94,19 @@ const OCR_MIME_TYPES = [
 function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu('Receipts')
-    .addItem('Process new receipts now', 'processReceipts')
+    .addItem('Sync now', 'processReceipts')
     .addItem('Re-read selected row(s)', 'reprocessSelectedRows')
     .addSeparator()
-    .addItem('Turn on weekly automatic run', 'installWeeklyTrigger')
-    .addItem('Turn off weekly automatic run', 'removeTriggers')
+    .addItem('Turn on weekly run + Sync checkbox', 'installTriggers')
+    .addItem('Turn off weekly run + Sync checkbox', 'removeTriggers')
     .addToUi();
+  try { ensureSyncCheckbox_(getOrCreateSheet_()); } catch (e) { /* not fatal */ }
 }
 
-function installWeeklyTrigger() {
+// Kept for anyone who set up the earlier version.
+function installWeeklyTrigger() { installTriggers(); }
+
+function installTriggers() {
   removeTriggers();
   ScriptApp.newTrigger('processReceipts')
     .timeBased()
@@ -110,13 +114,75 @@ function installWeeklyTrigger() {
     .onWeekDay(ScriptApp.WeekDay[CONFIG.WEEKLY_DAY])
     .atHour(CONFIG.WEEKLY_HOUR)
     .create();
-  toast_('Weekly run is on: every ' + CONFIG.WEEKLY_DAY.toLowerCase() + ' around ' + CONFIG.WEEKLY_HOUR + ':00.');
+  // An installable edit trigger: unlike menus, this also fires when the
+  // checkbox is ticked in the Google Sheets phone app.
+  ScriptApp.newTrigger('onSyncCheckbox')
+    .forSpreadsheet(SpreadsheetApp.getActiveSpreadsheet())
+    .onEdit()
+    .create();
+  ensureSyncCheckbox_(getOrCreateSheet_());
+  toast_('Weekly run is on (' + CONFIG.WEEKLY_DAY.toLowerCase() + 's around ' + CONFIG.WEEKLY_HOUR +
+    ':00). Tick "Sync now" at the top of the sheet any time.');
 }
 
 function removeTriggers() {
+  const handlers = ['processReceipts', 'onSyncCheckbox', 'continueProcessing'];
   ScriptApp.getProjectTriggers()
-    .filter(t => t.getHandlerFunction() === 'processReceipts')
+    .filter(t => handlers.indexOf(t.getHandlerFunction()) !== -1)
     .forEach(t => ScriptApp.deleteTrigger(t));
+}
+
+// ============================ SYNC CHECKBOX ============================
+// I1 holds a "Sync now" checkbox; H1 shows its status.
+
+const SYNC_LABEL_CELL = 'H1';
+const SYNC_BOX_CELL = 'I1';
+
+function ensureSyncCheckbox_(sheet) {
+  const box = sheet.getRange(SYNC_BOX_CELL);
+  if (box.getDataValidation() === null) {
+    box.insertCheckboxes().setValue(false);
+    const label = sheet.getRange(SYNC_LABEL_CELL);
+    if (!label.getValue()) label.setValue('Sync now →');
+    label.setFontWeight('bold').setHorizontalAlignment('right');
+    sheet.setColumnWidth(8, 230);
+  }
+}
+
+function onSyncCheckbox(e) {
+  if (!e || !e.range) return;
+  const sheet = e.range.getSheet();
+  if (sheet.getName() !== CONFIG.SHEET_NAME || e.range.getA1Notation() !== SYNC_BOX_CELL) return;
+  if (e.range.getValue() !== true) return;
+
+  const label = sheet.getRange(SYNC_LABEL_CELL);
+  label.setValue('Syncing… (keep this open or come back in a minute)');
+  SpreadsheetApp.flush();
+  let msg;
+  try {
+    msg = processReceipts();
+  } catch (err) {
+    msg = 'Sync failed: ' + err.message;
+  }
+  e.range.setValue(false);
+  label.setValue(msg || 'Sync now →');
+}
+
+/** Runs again a minute later when a sync ran out of time, until everything is in. */
+function continueProcessing() {
+  ScriptApp.getProjectTriggers()
+    .filter(t => t.getHandlerFunction() === 'continueProcessing')
+    .forEach(t => ScriptApp.deleteTrigger(t));
+  const msg = processReceipts();
+  try {
+    const sheet = getOrCreateSheet_();
+    sheet.getRange(SYNC_LABEL_CELL).setValue(msg);
+  } catch (e) { /* not fatal */ }
+}
+
+function scheduleContinuation_() {
+  const already = ScriptApp.getProjectTriggers().some(t => t.getHandlerFunction() === 'continueProcessing');
+  if (!already) ScriptApp.newTrigger('continueProcessing').timeBased().after(60 * 1000).create();
 }
 
 // ============================ MAIN ============================
@@ -127,10 +193,15 @@ function processReceipts() {
     throw new Error('Set CONFIG.FOLDER_ID at the top of Code.gs to your receipts folder ID.');
   }
   const lock = LockService.getScriptLock();
-  if (!lock.tryLock(10 * 1000)) return; // another run is in progress
+  if (!lock.tryLock(10 * 1000)) {
+    const busy = 'A sync is already running — check back in a few minutes.';
+    toast_(busy);
+    return busy;
+  }
 
   try {
     const sheet = getOrCreateSheet_();
+    ensureSyncCheckbox_(sheet);
     const known = getProcessedFileIds_(sheet);
     const files = listFiles_(DriveApp.getFolderById(CONFIG.FOLDER_ID), CONFIG.INCLUDE_SUBFOLDERS);
     const pending = files.filter(f => !known.has(f.getId()));
@@ -148,12 +219,16 @@ function processReceipts() {
     }
 
     ensureTotalRow_(sheet);
+    if (skippedForTime) scheduleContinuation_();
     if (added.length && CONFIG.EMAIL_SUMMARY) sendSummary_(added, skippedForTime);
 
-    const msg = added.length
-      ? 'Added ' + added.length + ' receipt(s). ' + added.filter(r => r.status !== 'OK').length + ' need a check.'
-      : 'No new receipts found.';
-    toast_(msg + (skippedForTime ? ' ' + skippedForTime + ' left for the next run (time limit).' : ''));
+    const when = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'd MMM h:mm a');
+    let msg = 'Last sync ' + when + ': ' + (added.length
+      ? added.length + ' added, ' + added.filter(r => r.status !== 'OK').length + ' to check.'
+      : 'nothing new.');
+    if (skippedForTime) msg += ' ' + skippedForTime + ' more coming automatically in ~1 min.';
+    toast_(msg);
+    return msg;
   } finally {
     lock.releaseLock();
   }
@@ -597,7 +672,7 @@ function sendSummary_(rows, leftOver) {
   let body = 'Receipts added this run: ' + rows.length + '\n\n';
   if (flagged.length) body += 'NEED YOUR CHECK (' + flagged.length + '):\n' + flagged.map(line).join('\n') + '\n\n';
   if (ok.length) body += 'Read OK (' + ok.length + '):\n' + ok.map(line).join('\n') + '\n\n';
-  if (leftOver) body += leftOver + ' more file(s) will be picked up next run.\n\n';
+  if (leftOver) body += leftOver + ' more file(s) are being added automatically in about a minute.\n\n';
   body += 'Open the sheet: ' + ss.getUrl();
 
   MailApp.sendEmail(Session.getEffectiveUser().getEmail(),
