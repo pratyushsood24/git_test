@@ -86,6 +86,12 @@ const CONFIG = {
   // Stop early so a run never hits Apps Script's 6-minute limit; the rest is
   // picked up automatically a minute later.
   MAX_RUNTIME_MS: 4.5 * 60 * 1000,
+
+  // When a photo has NO readable text, Gemini's total can't be cross-checked.
+  //   true  = use Gemini's number (counted in TOTAL) but keep the row orange
+  //           so you can glance at it.
+  //   false = strict: leave Total blank until you type it in.
+  TRUST_AI_WHEN_NO_TEXT: true,
 };
 
 const HEADERS = ['Date', 'Vendor', 'Total', 'Receipt', 'Status', 'Notes', 'File ID'];
@@ -489,6 +495,9 @@ function applyAi_(row, ai, text, ocr) {
   if (grounded) {
     row.total = total;
     if (ai.confidence === 'low') row.notes.push('AI was unsure: ' + (ai.reason || 'check the receipt') + '.');
+  } else if (!text && CONFIG.TRUST_AI_WHEN_NO_TEXT && ai.confidence !== 'low') {
+    row.total = total;
+    row.notes.push('Counted from AI only — the photo has no readable text to cross-check ' + fmtMoney_(total) + '. Glance at it, then set Status to OK.');
   } else if (!text) {
     row.notes.push('AI read ' + fmtMoney_(total) + ' but the file has no readable text to confirm it — please check.');
   } else {

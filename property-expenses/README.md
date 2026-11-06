@@ -65,6 +65,6 @@ Once a week this reads every new receipt or invoice in a Google Drive folder and
 ## Known limits
 
 - **An invoice plus a separate payment receipt for the same job** can still appear as two rows if they have different numbers and dates. Keep only one of them in the folder.
-- **Badly lit or crumpled photos** may OCR poorly. These come up as CHECK, not wrong numbers.
+- **Photos with no readable text** can't be cross-checked. By default Gemini's number is used and counted, and the row stays orange so you can glance at it. If Gemini itself was unsure, the total is left blank. For the strict rule (always blank until you type it), set `TRUST_AI_WHEN_NO_TEXT: false` in `Code.gs`.
 - **Dates are read day-first** (Australian format). Change `DATE_ORDER` to `'MDY'` for US-style receipts.
 - **Large batches:** each run stops after about 4.5 minutes (Google's time limit), then carries on automatically a minute later until every file is in.
